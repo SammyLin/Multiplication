@@ -1,0 +1,52 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: light;
+    font-size: 16px;
+  }
+
+  @media (max-width: 768px) {
+    :root {
+      font-size: clamp(14px, 2.4vw, 16px);
+    }
+  }
+
+  body {
+    @apply min-h-screen m-0 font-body bg-gradient-to-b from-[rgba(255,235,194,0.96)] to-[rgba(142,202,230,0.35)] text-midnight;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply m-0 font-display;
+  }
+
+  button {
+    @apply font-display border-none cursor-pointer transition duration-150 ease-snappy;
+  }
+
+  button:disabled {
+    @apply cursor-not-allowed opacity-60;
+  }
+
+  p {
+    @apply m-0 leading-relaxed;
+  }
+
+  a {
+    color: inherit;
+  }
+}
+
+@layer utilities {
+  .visually-hidden {
+    @apply absolute w-px h-px p-0 -m-px overflow-hidden whitespace-nowrap border-0;
+    clip: rect(0, 0, 0, 0);
+  }
+}
