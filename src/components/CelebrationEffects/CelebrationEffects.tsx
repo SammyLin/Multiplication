@@ -67,23 +67,31 @@ const CelebrationEffects = ({ show, perfect = false, onComplete }: CelebrationEf
       <div className="absolute inset-0 flex items-center justify-center">
         <div className="text-center animate-bounce-gentle">
           {perfect ? (
-            <div className="space-y-2">
-              <div className="text-6xl animate-number-pop">🏆</div>
+            <div className="space-y-4">
+              <img 
+                src="/images/success-celebration.png" 
+                alt="完美慶祝！" 
+                className="w-40 h-24 mx-auto animate-number-pop"
+              />
               <div className="text-2xl font-bold text-yellow-600 animate-pulse-glow">
-                完美！
+                完美！全部答對了！
               </div>
               <div className="text-lg text-yellow-500">
-                全部答對了！
+                你是乘法小天才！
               </div>
             </div>
           ) : (
-            <div className="space-y-2">
-              <div className="text-5xl animate-number-pop">🎉</div>
+            <div className="space-y-4">
+              <img 
+                src="/images/success-celebration.png" 
+                alt="太棒了！" 
+                className="w-32 h-20 mx-auto animate-number-pop"
+              />
               <div className="text-xl font-bold text-green-600 animate-pulse-glow">
-                太棒了！
+                太棒了！任務完成！
               </div>
               <div className="text-lg text-green-500">
-                任務完成！
+                繼續加油！
               </div>
             </div>
           )}

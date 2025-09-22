@@ -4,6 +4,7 @@ import CuteMascots, { type MascotProfile } from '../../components/CuteMascots/Cu
 import CelebrationEffects from '../../components/CelebrationEffects/CelebrationEffects'
 import AnswerFeedback from '../../components/AnswerFeedback/AnswerFeedback'
 import ProgressIndicator from '../../components/ProgressIndicator/ProgressIndicator'
+// import CuteButton from '../../components/CuteButton/CuteButton'
 import SoundControl from '../../components/SoundControl/SoundControl'
 import { useMultiplicationGame } from '../../hooks/useMultiplicationGame'
 import {
@@ -38,49 +39,11 @@ const mascots: MascotDialog[] = [
     celebrate: '任務完成！星芒貓頭鷹替你啾啾叫，表示超棒。',
     celebratePerfect: '全對耶！星芒貓頭鷹送上金色羽毛為你鼓掌！',
     svg: (
-      <svg viewBox="0 0 140 140" role="img" aria-label="星芒貓頭鷹">
-        <defs>
-          <linearGradient id="owlBody" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#ffda79" />
-            <stop offset="100%" stopColor="#ff9f1c" />
-          </linearGradient>
-          <radialGradient id="owlBelly" cx="50%" cy="40%" r="60%">
-            <stop offset="0%" stopColor="#fff8d6" />
-            <stop offset="100%" stopColor="#ffd166" />
-          </radialGradient>
-        </defs>
-        <rect width="140" height="140" rx="32" fill="#fff5e1" />
-        <circle cx="70" cy="68" r="46" fill="url(#owlBody)" />
-        <ellipse cx="48" cy="62" rx="12" ry="16" fill="#fff">
-          <animate attributeName="ry" values="16;14;16" dur="3.2s" repeatCount="indefinite" />
-        </ellipse>
-        <ellipse cx="92" cy="62" rx="12" ry="16" fill="#fff">
-          <animate attributeName="ry" values="16;14;16" dur="3.4s" repeatCount="indefinite" />
-        </ellipse>
-        <circle cx="48" cy="62" r="7" fill="#31221b">
-          <animate attributeName="cy" values="62;60;62" dur="2.8s" repeatCount="indefinite" />
-        </circle>
-        <circle cx="92" cy="62" r="7" fill="#31221b">
-          <animate attributeName="cy" values="62;64;62" dur="2.6s" repeatCount="indefinite" />
-        </circle>
-        <path d="M58 90 Q70 102 82 90" fill="#fdce74" stroke="#ed9f32" strokeWidth="4" strokeLinecap="round" />
-        <circle cx="70" cy="86" r="20" fill="url(#owlBelly)" />
-        <polygon points="70,44 58,68 82,68" fill="#f78c6c">
-          <animateTransform attributeName="transform" type="translate" values="0 0; 0 -1; 0 0" dur="1.8s" repeatCount="indefinite" />
-        </polygon>
-        <path d="M36 46 Q50 22 70 34" stroke="#f7a647" strokeWidth="6" strokeLinecap="round">
-          <animate attributeName="d" values="M36 46 Q50 22 70 34; M36 44 Q50 24 70 34; M36 46 Q50 22 70 34" dur="3s" repeatCount="indefinite" />
-        </path>
-        <path d="M104 46 Q90 22 70 34" stroke="#f7a647" strokeWidth="6" strokeLinecap="round">
-          <animate attributeName="d" values="M104 46 Q90 22 70 34; M104 44 Q90 24 70 34; M104 46 Q90 22 70 34" dur="3s" repeatCount="indefinite" />
-        </path>
-        <circle cx="50" cy="40" r="6" fill="#ffe066">
-          <animate attributeName="r" values="6;5;6" dur="2.2s" repeatCount="indefinite" />
-        </circle>
-        <circle cx="88" cy="36" r="6" fill="#ffe066">
-          <animate attributeName="r" values="6;5;6" dur="2s" repeatCount="indefinite" />
-        </circle>
-      </svg>
+      <img 
+        src="/images/cute-owl-mascot.png" 
+        alt="星芒貓頭鷹" 
+        className="w-20 h-20 object-contain animate-bounce-gentle"
+      />
     ),
   },
   {
@@ -94,52 +57,11 @@ const mascots: MascotDialog[] = [
     celebrate: '冒險完成！泡泡狐狸送上清脆的水泡掌聲。',
     celebratePerfect: '滿分泡泡爆開煙火～你是今天的乘法冠軍！',
     svg: (
-      <svg viewBox="0 0 140 140" role="img" aria-label="泡泡狐狸">
-        <defs>
-          <linearGradient id="foxBody" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#8ecae6" />
-            <stop offset="100%" stopColor="#219ebc" />
-          </linearGradient>
-        </defs>
-        <rect width="140" height="140" rx="32" fill="#e4f3fb" />
-        <path d="M70 34 L38 60 Q50 110 70 116 Q90 110 102 60 Z" fill="url(#foxBody)" />
-        <ellipse cx="70" cy="86" rx="24" ry="18" fill="#fff" opacity="0.85" />
-        <ellipse cx="58" cy="66" rx="10" ry="12" fill="#fff">
-          <animate attributeName="ry" values="12;10;12" dur="3s" repeatCount="indefinite" />
-        </ellipse>
-        <ellipse cx="82" cy="66" rx="10" ry="12" fill="#fff">
-          <animate attributeName="ry" values="12;9;12" dur="3.2s" repeatCount="indefinite" />
-        </ellipse>
-        <circle cx="58" cy="66" r="5" fill="#1b4456">
-          <animate attributeName="cx" values="58;60;58" dur="2.6s" repeatCount="indefinite" />
-        </circle>
-        <circle cx="82" cy="66" r="5" fill="#1b4456">
-          <animate attributeName="cx" values="82;80;82" dur="2.6s" repeatCount="indefinite" />
-        </circle>
-        <path d="M70 78 Q74 84 70 88 Q66 84 70 78" fill="#ffb6b9">
-          <animate attributeName="d" values="M70 78 Q74 84 70 88 Q66 84 70 78; M70 78 Q72 86 70 90 Q68 86 70 78; M70 78 Q74 84 70 88 Q66 84 70 78" dur="2.7s" repeatCount="indefinite" />
-        </path>
-        <path d="M46 54 L58 40" stroke="#219ebc" strokeWidth="6" strokeLinecap="round">
-          <animate attributeName="d" values="M46 54 L58 40; M46 52 L58 38; M46 54 L58 40" dur="2.4s" repeatCount="indefinite" />
-        </path>
-        <path d="M94 54 L82 40" stroke="#219ebc" strokeWidth="6" strokeLinecap="round">
-          <animate attributeName="d" values="M94 54 L82 40; M94 52 L82 38; M94 54 L82 40" dur="2.4s" repeatCount="indefinite" />
-        </path>
-        <g opacity="0.6">
-          <circle cx="30" cy="104" r="8" fill="#fff">
-            <animate attributeName="cy" values="104;100;104" dur="4s" repeatCount="indefinite" />
-          </circle>
-          <circle cx="36" cy="110" r="6" fill="#fff">
-            <animate attributeName="cy" values="110;106;110" dur="3.6s" repeatCount="indefinite" />
-          </circle>
-          <circle cx="110" cy="102" r="7" fill="#fff">
-            <animate attributeName="cy" values="102;98;102" dur="3.8s" repeatCount="indefinite" />
-          </circle>
-          <circle cx="104" cy="110" r="5" fill="#fff">
-            <animate attributeName="cy" values="110;105;110" dur="3.4s" repeatCount="indefinite" />
-          </circle>
-        </g>
-      </svg>
+      <img 
+        src="/images/cute-fox-mascot.png" 
+        alt="泡泡狐狸" 
+        className="w-20 h-20 object-contain animate-bounce-gentle"
+      />
     ),
   },
   {
@@ -153,49 +75,11 @@ const mascots: MascotDialog[] = [
     celebrate: '完成！音符水獺替你奏出快樂的勝利旋律。',
     celebratePerfect: '滿分大合奏！水獺樂團為你開啟慶祝演奏會。',
     svg: (
-      <svg viewBox="0 0 140 140" role="img" aria-label="音符水獺">
-        <defs>
-          <linearGradient id="otterBody" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#b8f2b4" />
-            <stop offset="100%" stopColor="#55a630" />
-          </linearGradient>
-        </defs>
-        <rect width="140" height="140" rx="32" fill="#eef9f0" />
-        <path d="M70 28 Q90 36 98 62 Q104 90 90 110 Q74 130 50 110 Q36 90 42 62 Q50 36 70 28" fill="url(#otterBody)">
-          <animate attributeName="d" values="M70 28 Q90 36 98 62 Q104 90 90 110 Q74 130 50 110 Q36 90 42 62 Q50 36 70 28; M70 28 Q88 36 96 62 Q102 90 88 110 Q74 128 52 110 Q38 92 44 62 Q50 36 70 28; M70 28 Q90 36 98 62 Q104 90 90 110 Q74 130 50 110 Q36 90 42 62 Q50 36 70 28" dur="4.6s" repeatCount="indefinite" />
-        </path>
-        <ellipse cx="54" cy="70" rx="9" ry="12" fill="#fff">
-          <animate attributeName="ry" values="12;9;12" dur="3.8s" repeatCount="indefinite" />
-        </ellipse>
-        <ellipse cx="86" cy="70" rx="9" ry="12" fill="#fff">
-          <animate attributeName="ry" values="12;9;12" dur="3.9s" repeatCount="indefinite" />
-        </ellipse>
-        <circle cx="54" cy="70" r="5" fill="#1f3c2f">
-          <animate attributeName="cy" values="70;72;70" dur="2.8s" repeatCount="indefinite" />
-        </circle>
-        <circle cx="86" cy="70" r="5" fill="#1f3c2f">
-          <animate attributeName="cy" values="70;68;70" dur="2.8s" repeatCount="indefinite" />
-        </circle>
-        <ellipse cx="70" cy="86" rx="14" ry="10" fill="#ffe0ac" />
-        <path d="M60 94 Q70 100 80 94" stroke="#2f673f" strokeWidth="4" strokeLinecap="round">
-          <animate attributeName="d" values="M60 94 Q70 100 80 94; M60 92 Q70 102 80 92; M60 94 Q70 100 80 94" dur="3.4s" repeatCount="indefinite" />
-        </path>
-        <circle cx="48" cy="46" r="6" fill="#ffd166">
-          <animate attributeName="r" values="6;4;6" dur="2.6s" repeatCount="indefinite" />
-        </circle>
-        <circle cx="92" cy="46" r="6" fill="#ffd166">
-          <animate attributeName="r" values="6;4;6" dur="2.6s" repeatCount="indefinite" />
-        </circle>
-        <path d="M100 40 Q118 32 118 20" stroke="#55a630" strokeWidth="8" strokeLinecap="round">
-          <animate attributeName="d" values="M100 40 Q118 32 118 20; M100 38 Q118 30 118 20; M100 40 Q118 32 118 20" dur="3.6s" repeatCount="indefinite" />
-        </path>
-        <circle cx="118" cy="20" r="6" fill="#55a630">
-          <animate attributeName="cy" values="20;18;20" dur="3.2s" repeatCount="indefinite" />
-        </circle>
-        <circle cx="110" cy="32" r="4" fill="#55a630">
-          <animate attributeName="cy" values="32;30;32" dur="3.2s" repeatCount="indefinite" />
-        </circle>
-      </svg>
+      <img 
+        src="/images/cute-otter-mascot.png" 
+        alt="音符水獺" 
+        className="w-20 h-20 object-contain animate-bounce-gentle"
+      />
     ),
   },
 ]
@@ -291,7 +175,7 @@ const MultiplicationAdventure = () => {
         
         // 清除反饋動畫
         setTimeout(() => {
-          setAnswerFeedback({ show: false, isCorrect: false })
+          setAnswerFeedback(prev => ({ ...prev, show: false }))
         }, 1500)
       }
       answerCountRef.current = answers.length
@@ -592,7 +476,7 @@ const MultiplicationAdventure = () => {
         show={answerFeedback.show}
         isCorrect={answerFeedback.isCorrect}
         position={answerFeedback.position}
-        onComplete={() => setAnswerFeedback({ show: false, isCorrect: false })}
+        onComplete={() => setAnswerFeedback(prev => ({ ...prev, show: false }))}
       />
     </div>
   )

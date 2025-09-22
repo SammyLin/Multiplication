@@ -17,7 +17,17 @@
   }
 
   body {
-    @apply min-h-screen m-0 font-body bg-gradient-to-b from-[rgba(255,235,194,0.96)] to-[rgba(142,202,230,0.35)] text-midnight;
+    @apply min-h-screen m-0 font-body text-midnight;
+    background: linear-gradient(135deg, #ffeaa7 0%, #fab1a0 25%, #fd79a8 50%, #a29bfe 75%, #74b9ff 100%);
+    background-size: 400% 400%;
+    animation: gradientShift 20s ease infinite;
+    background-attachment: fixed;
+  }
+
+  @keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
   }
 
   h1,
