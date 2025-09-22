@@ -6,6 +6,10 @@ export type MascotProfile = {
   title: string
   subtitle: string
   gradient: string
+  greeting: string
+  encourage: string
+  celebrate: string
+  celebratePerfect: string
   svg: ReactNode
 }
 

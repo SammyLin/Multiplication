@@ -4,6 +4,7 @@ import CuteMascots, { type MascotProfile } from '../../components/CuteMascots/Cu
 import CelebrationEffects from '../../components/CelebrationEffects/CelebrationEffects'
 import AnswerFeedback from '../../components/AnswerFeedback/AnswerFeedback'
 import ProgressIndicator from '../../components/ProgressIndicator/ProgressIndicator'
+import MascotCelebration from '../../components/MascotCelebration/MascotCelebration'
 // import CuteButton from '../../components/CuteButton/CuteButton'
 import SoundControl from '../../components/SoundControl/SoundControl'
 import { useMultiplicationGame } from '../../hooks/useMultiplicationGame'
@@ -102,11 +103,12 @@ const MultiplicationAdventure = () => {
 
   const [selectedMascotId, setSelectedMascotId] = useState<string | null>(null)
   const [showCelebration, setShowCelebration] = useState(false)
+  const [showMascotCelebration, setShowMascotCelebration] = useState(false)
   const [answerFeedback, setAnswerFeedback] = useState<{
     show: boolean
     isCorrect: boolean
-    position?: { x: number; y: number }
-  }>({ show: false, isCorrect: false })
+    position: { x: number; y: number } | null
+  }>({ show: false, isCorrect: false, position: null })
   
   const answerCountRef = useRef(0)
   const previousStatusRef = useRef(state.status)
@@ -189,6 +191,11 @@ const MultiplicationAdventure = () => {
       
       // 顯示慶祝動畫
       setShowCelebration(true)
+      
+      // 延遲顯示吉祥物慶祝動畫
+      setTimeout(() => {
+        setShowMascotCelebration(true)
+      }, 1000)
       
       // 5秒後自動隱藏慶祝動畫
       setTimeout(() => {
@@ -475,8 +482,16 @@ const MultiplicationAdventure = () => {
       <AnswerFeedback
         show={answerFeedback.show}
         isCorrect={answerFeedback.isCorrect}
-        position={answerFeedback.position}
+        position={answerFeedback.position || undefined}
         onComplete={() => setAnswerFeedback(prev => ({ ...prev, show: false }))}
+      />
+      
+      {/* 吉祥物慶祝動畫 */}
+      <MascotCelebration
+        show={showMascotCelebration}
+        mascot={selectedMascot}
+        perfect={perfect}
+        onComplete={() => setShowMascotCelebration(false)}
       />
     </div>
   )
