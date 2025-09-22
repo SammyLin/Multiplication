@@ -55,6 +55,9 @@ const MultiplicationAdventure = () => {
     startSession,
     submitAnswer,
     resetToMenu,
+    score,
+    completionTimeMs,
+    leaderboard,
   } = useMultiplicationGame()
 
   // 固定使用小海豹作為唯一吉祥物
@@ -70,6 +73,31 @@ const MultiplicationAdventure = () => {
   const previousStatusRef = useRef(state.status)
 
   const incorrectAnswers = answers.filter((attempt) => !attempt.isCorrect)
+
+  const formatDuration = (duration?: number) => {
+    if (duration === undefined) {
+      return '—'
+    }
+
+    const totalSeconds = duration / 1000
+
+    if (totalSeconds < 60) {
+      const display = totalSeconds >= 10 ? Math.round(totalSeconds) : Number(totalSeconds.toFixed(1))
+      return `${display} 秒`
+    }
+
+    const minutes = Math.floor(totalSeconds / 60)
+    const seconds = Math.round(totalSeconds % 60)
+    return `${minutes} 分 ${seconds.toString().padStart(2, '0')} 秒`
+  }
+
+  const formattedDuration = formatDuration(completionTimeMs)
+  const displayedScore =
+    score ?? Math.round((correctCount / Math.max(progress.total, 1)) * 1000)
+  const latestEntryId =
+    state.status === 'finished' && state.completedAt
+      ? leaderboard.find((entry) => entry.createdAt === state.completedAt)?.id
+      : undefined
 
   const handleStartSession = () => {
     soundManager.playSound(() => playButtonClick())
@@ -159,7 +187,7 @@ const MultiplicationAdventure = () => {
   return (
     <div className="mx-auto flex min-h-screen w-full max-w-4xl flex-col gap-6 px-4 py-8 md:px-8">
       <header className="text-center relative">
-        <h1 className="text-3xl font-display text-midnight">九九小冒險</h1>
+        <h1 className="text-3xl font-display text-midnight">小海豹九九乘法表挑戰遊戲</h1>
         <p className="text-sm text-midnight/75">一次 9 題，挑戰你的乘法英雄力！</p>
         
         {/* 音效控制 */}
@@ -365,12 +393,42 @@ const MultiplicationAdventure = () => {
           )}
           <div className={`space-y-2 ${perfect ? 'relative z-10' : ''}`}>
             <h2 className="text-2xl font-display text-midnight">完成啦！</h2>
-            <p className="text-lg font-semibold text-midnight">
-              得分 {correctCount} / {progress.total}
+            <p className="text-lg font-semibold text-midnight">總分 {displayedScore} 分</p>
+            <p className="text-sm font-semibold text-midnight/80">
+              正確 {correctCount} / {progress.total} 題 · 花了 {formattedDuration}
             </p>
             <p className="text-midnight/80">
               {perfect ? whiteSealMascot.celebratePerfect : whiteSealMascot.celebrate}
             </p>
+          </div>
+
+          <div className="rounded-2xl bg-cream/70 p-4 text-left text-sm text-midnight shadow-soft">
+            <h3 className="text-base font-bold text-midnight">小海豹排行榜</h3>
+            {leaderboard.length === 0 ? (
+              <p className="mt-2 text-midnight/75">還沒有任何紀錄，快來搶下第一名！</p>
+            ) : (
+              <ol className="mt-3 space-y-2" data-testid="mul-leaderboard">
+                {leaderboard.map((entry, index) => {
+                  const isLatest = entry.id === latestEntryId
+                  return (
+                    <li
+                      key={entry.id}
+                      className={`flex flex-wrap items-center justify-between gap-2 rounded-xl px-3 py-2 ${
+                        isLatest ? 'bg-sunrise/20 font-bold text-midnight' : 'bg-white/60'
+                      }`}
+                    >
+                      <span>
+                        第 {index + 1} 名 · {entry.score} 分
+                      </span>
+                      <span className="text-sm text-midnight/75">
+                        正確 {entry.correctCount} / {entry.totalQuestions} 題 · {formatDuration(entry.durationMs)} ·
+                        {entry.mode === 'practice' ? ' 練習模式' : ' 挑戰模式'}
+                      </span>
+                    </li>
+                  )
+                })}
+              </ol>
+            )}
           </div>
 
           {incorrectAnswers.length > 0 && (

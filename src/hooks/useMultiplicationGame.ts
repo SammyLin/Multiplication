@@ -1,8 +1,23 @@
-import { useMemo, useReducer } from 'react'
+import { useEffect, useMemo, useReducer, useState } from 'react'
 import type { Mission } from '../game/gameTypes'
 import { createMission, evaluateAnswer } from '../game/multiplicationEngine'
 
 const QUESTION_COUNT = 9
+const LEADERBOARD_STORAGE_KEY = 'multiplication-leaderboard'
+const LEADERBOARD_LIMIT = 5
+const TARGET_TIME_PER_QUESTION_SECONDS = 4
+const MIN_SPEED_MULTIPLIER = 0.6
+const MAX_SPEED_MULTIPLIER = 1.6
+
+export type LeaderboardEntry = {
+  id: string
+  score: number
+  correctCount: number
+  totalQuestions: number
+  durationMs: number
+  mode: SessionMode
+  createdAt: number
+}
 
 export type SessionMode = 'practice' | 'challenge'
 export type QuestionPattern = 'random' | 'sequential'
@@ -29,6 +44,10 @@ type SessionState = {
   answers: AttemptRecord[]
   feedback?: Feedback
   showCelebration: boolean
+  sessionStartMs: number | null
+  completionTimeMs?: number
+  completedAt?: number
+  score?: number
 }
 
 type SessionAction =
@@ -49,6 +68,96 @@ const initialState: SessionState = {
   answers: [],
   feedback: undefined,
   showCelebration: false,
+  sessionStartMs: null,
+}
+
+const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value))
+
+const calculateScore = (correctCount: number, totalQuestions: number, durationMs?: number) => {
+  if (totalQuestions <= 0) {
+    return 0
+  }
+
+  const accuracyRatio = correctCount / totalQuestions
+  const baseScore = Math.round(accuracyRatio * 1000)
+
+  if (durationMs === undefined) {
+    return baseScore
+  }
+
+  const durationSeconds = durationMs / 1000
+  if (durationSeconds <= 0) {
+    return Math.round(baseScore * MAX_SPEED_MULTIPLIER)
+  }
+
+  const targetTimeSeconds = totalQuestions * TARGET_TIME_PER_QUESTION_SECONDS
+  const speedMultiplier = clamp(targetTimeSeconds / durationSeconds, MIN_SPEED_MULTIPLIER, MAX_SPEED_MULTIPLIER)
+  return Math.round(baseScore * speedMultiplier)
+}
+
+const generateEntryId = () => {
+  if (typeof crypto !== 'undefined' && 'randomUUID' in crypto) {
+    return crypto.randomUUID()
+  }
+  return `entry-${Date.now()}-${Math.random().toString(16).slice(2)}`
+}
+
+const loadLeaderboard = (): LeaderboardEntry[] => {
+  if (typeof window === 'undefined') {
+    return []
+  }
+
+  try {
+    const raw = window.localStorage.getItem(LEADERBOARD_STORAGE_KEY)
+    if (!raw) {
+      return []
+    }
+
+    const parsed = JSON.parse(raw)
+    if (!Array.isArray(parsed)) {
+      return []
+    }
+
+    return parsed
+      .filter((item): item is LeaderboardEntry => {
+        if (typeof item !== 'object' || item === null) {
+          return false
+        }
+        const candidate = item as LeaderboardEntry
+        return (
+          typeof candidate.id === 'string' &&
+          typeof candidate.score === 'number' &&
+          typeof candidate.correctCount === 'number' &&
+          typeof candidate.totalQuestions === 'number' &&
+          typeof candidate.durationMs === 'number' &&
+          typeof candidate.mode === 'string' &&
+          typeof candidate.createdAt === 'number'
+        )
+      })
+      .sort((a, b) => {
+        if (b.score !== a.score) {
+          return b.score - a.score
+        }
+        if (a.durationMs !== b.durationMs) {
+          return a.durationMs - b.durationMs
+        }
+        return a.createdAt - b.createdAt
+      })
+      .slice(0, LEADERBOARD_LIMIT)
+  } catch (error) {
+    console.warn('無法載入排行榜資料', error)
+    return []
+  }
+}
+
+const sortLeaderboard = (a: LeaderboardEntry, b: LeaderboardEntry) => {
+  if (b.score !== a.score) {
+    return b.score - a.score
+  }
+  if (a.durationMs !== b.durationMs) {
+    return a.durationMs - b.durationMs
+  }
+  return a.createdAt - b.createdAt
 }
 
 const buildSequentialMissions = (focusTable: number): Mission[] => {
@@ -100,6 +209,10 @@ const sessionReducer = (state: SessionState, action: SessionAction): SessionStat
         answers: [],
         feedback: undefined,
         showCelebration: false,
+        sessionStartMs: Date.now(),
+        completionTimeMs: undefined,
+        completedAt: undefined,
+        score: undefined,
       }
     }
     case 'SUBMIT_ANSWER': {
@@ -125,6 +238,10 @@ const sessionReducer = (state: SessionState, action: SessionAction): SessionStat
 
       if (nextIndex >= QUESTION_COUNT) {
         const perfect = answers.every((answer) => answer.isCorrect) && answers.length === QUESTION_COUNT
+        const completedAt = Date.now()
+        const completionTimeMs = state.sessionStartMs !== null ? completedAt - state.sessionStartMs : undefined
+        const correctCount = answers.filter((answer) => answer.isCorrect).length
+        const score = calculateScore(correctCount, QUESTION_COUNT, completionTimeMs)
         return {
           ...state,
           status: 'finished',
@@ -132,6 +249,9 @@ const sessionReducer = (state: SessionState, action: SessionAction): SessionStat
           feedback,
           showCelebration: perfect,
           currentIndex: QUESTION_COUNT - 1,
+          completionTimeMs,
+          completedAt,
+          score,
         }
       }
 
@@ -151,6 +271,10 @@ const sessionReducer = (state: SessionState, action: SessionAction): SessionStat
         answers: [],
         feedback: undefined,
         showCelebration: false,
+        sessionStartMs: null,
+        completionTimeMs: undefined,
+        completedAt: undefined,
+        score: undefined,
       }
     default:
       return state
@@ -159,6 +283,48 @@ const sessionReducer = (state: SessionState, action: SessionAction): SessionStat
 
 export const useMultiplicationGame = () => {
   const [state, dispatch] = useReducer(sessionReducer, initialState)
+  const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>(() => loadLeaderboard())
+
+  useEffect(() => {
+    if (
+      state.status !== 'finished' ||
+      state.score === undefined ||
+      state.completionTimeMs === undefined ||
+      state.completedAt === undefined
+    ) {
+      return
+    }
+
+    const correctAnswers = state.answers.filter((attempt) => attempt.isCorrect).length
+
+    setLeaderboard((previous) => {
+      if (previous.some((entry) => entry.createdAt === state.completedAt)) {
+        return previous
+      }
+
+      const entry: LeaderboardEntry = {
+        id: generateEntryId(),
+        score: state.score ?? 0,
+        correctCount: correctAnswers,
+        totalQuestions: QUESTION_COUNT,
+        durationMs: state.completionTimeMs ?? 0,
+        mode: state.mode,
+        createdAt: state.completedAt,
+      }
+
+      const updated = [...previous, entry].sort(sortLeaderboard).slice(0, LEADERBOARD_LIMIT)
+
+      if (typeof window !== 'undefined') {
+        try {
+          window.localStorage.setItem(LEADERBOARD_STORAGE_KEY, JSON.stringify(updated))
+        } catch (error) {
+          console.warn('無法儲存排行榜資料', error)
+        }
+      }
+
+      return updated
+    })
+  }, [state])
 
   const currentMission = useMemo(() => {
     if (state.status !== 'playing') {
@@ -194,6 +360,9 @@ export const useMultiplicationGame = () => {
     correctCount,
     perfect,
     answers,
+    score: state.score,
+    completionTimeMs: state.completionTimeMs,
+    leaderboard,
     updateMode: (mode: SessionMode) => dispatch({ type: 'UPDATE_MODE', mode }),
     updatePattern: (pattern: QuestionPattern) => dispatch({ type: 'UPDATE_PATTERN', pattern }),
     updateFocusTable: (table: number) => dispatch({ type: 'UPDATE_FOCUS_TABLE', table }),
