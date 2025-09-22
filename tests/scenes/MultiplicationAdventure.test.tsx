@@ -15,9 +15,9 @@ describe('MultiplicationAdventure scene', () => {
   it('lets a learner answer practice questions using choices', async () => {
     render(<App />)
 
-    expect(screen.getByTestId('mul-cute-mascots')).toBeInTheDocument()
-    expect(screen.getByTestId('mul-mode-instructions')).toBeInTheDocument()
-    await userEvent.click(screen.getByTestId('mul-mascot-owl'))
+    // 小白豹是固定的吉祥物，不需要選擇
+    expect(screen.getByText('小白豹')).toBeInTheDocument()
+    expect(screen.getByText('選擇練習方式')).toBeInTheDocument()
 
     await userEvent.click(screen.getByTestId('mul-start-session'))
 
@@ -39,7 +39,6 @@ describe('MultiplicationAdventure scene', () => {
   it('supports challenge mode with keypad entry and sequential tables', async () => {
     render(<App />)
 
-    await userEvent.click(screen.getByTestId('mul-mascot-owl'))
     await userEvent.click(screen.getByTestId('mul-mode-challenge'))
     await userEvent.click(screen.getByTestId('mul-pattern-sequential'))
     await userEvent.click(screen.getByTestId('mul-table-2'))
@@ -65,7 +64,6 @@ describe('MultiplicationAdventure scene', () => {
   it('shows a celebration when all answers are correct', async () => {
     render(<App />)
 
-    await userEvent.click(screen.getByTestId('mul-mascot-owl'))
     await userEvent.click(screen.getByTestId('mul-mode-challenge'))
     await userEvent.click(screen.getByTestId('mul-pattern-sequential'))
     await userEvent.click(screen.getByTestId('mul-table-2'))

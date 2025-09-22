@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import MissionPanel from '../../components/MissionPanel/MissionPanel'
-import CuteMascots, { type MascotProfile } from '../../components/CuteMascots/CuteMascots'
+import { type MascotProfile } from '../../components/CuteMascots/CuteMascots'
 import CelebrationEffects from '../../components/CelebrationEffects/CelebrationEffects'
 import AnswerFeedback from '../../components/AnswerFeedback/AnswerFeedback'
 import ProgressIndicator from '../../components/ProgressIndicator/ProgressIndicator'
@@ -14,85 +14,41 @@ import {
   playSuccessChime,
   triggerUserGestureAudio,
   playButtonClick,
-  playSelectSound,
+
   backgroundMusic,
 } from '../../utils/improvedSoundEffects'
 import { soundManager } from '../../utils/soundManager'
 
 const tableOptions = Array.from({ length: 8 }, (_, index) => index + 2)
 
-type MascotDialog = MascotProfile & {
-  greeting: string
-  encourage: string
-  celebrate: string
-  celebratePerfect: string
-}
-
-const mascots: MascotDialog[] = [
-  {
-    id: 'owl',
-    name: '星芒貓頭鷹',
-    title: '星芒貓頭鷹',
-    subtitle: '守護你的乘法旅程',
-    gradient: 'from-[#ffd166] to-[#ff9f1c]',
-    greeting: '呼呼～我是星芒貓頭鷹，今天一起展開閃亮的乘法任務吧！',
-    encourage: '挑好模式後記得深呼吸，我會在天空給你勇氣提醒。',
-    celebrate: '任務完成！星芒貓頭鷹替你啾啾叫，表示超棒。',
-    celebratePerfect: '全對耶！星芒貓頭鷹送上金色羽毛為你鼓掌！',
-    svg: (
-      <img 
-        src="/images/cute-owl-mascot.png" 
-        alt="星芒貓頭鷹" 
-        className="w-20 h-20 object-contain animate-bounce-gentle"
-      />
-    ),
-  },
-  {
-    id: 'fox',
-    name: '泡泡狐狸',
-    title: '泡泡狐狸',
-    subtitle: '陪你一起闖關',
-    gradient: 'from-[#8ecae6] to-[#219ebc]',
-    greeting: '嘿嘿～泡泡狐狸來啦！我們用泡泡包住每一題的答案。',
-    encourage: '遇到難題先輕敲泡泡，思考一下再回答，我會給你信心。',
-    celebrate: '冒險完成！泡泡狐狸送上清脆的水泡掌聲。',
-    celebratePerfect: '滿分泡泡爆開煙火～你是今天的乘法冠軍！',
-    svg: (
-      <img 
-        src="/images/cute-fox-mascot.png" 
-        alt="泡泡狐狸" 
-        className="w-20 h-20 object-contain animate-bounce-gentle"
-      />
-    ),
-  },
-  {
-    id: 'otter',
-    name: '音符水獺',
-    title: '音符水獺',
-    subtitle: '節奏記憶小幫手',
-    gradient: 'from-[#90be6d] to-[#55a630]',
-    greeting: '噗通～音符水獺在水面敲節奏，跟著節奏記答案吧！',
-    encourage: '每答一題我就敲一下木琴，維持節奏就能記住乘法。',
-    celebrate: '完成！音符水獺替你奏出快樂的勝利旋律。',
-    celebratePerfect: '滿分大合奏！水獺樂團為你開啟慶祝演奏會。',
-    svg: (
-      <img 
-        src="/images/cute-otter-mascot.png" 
-        alt="音符水獺" 
-        className="w-20 h-20 object-contain animate-bounce-gentle"
-      />
-    ),
-  },
-]
-
 const MultiplicationAdventure = () => {
+  // 小白豹吉祥物資料
+  const whiteLeopardMascot: MascotProfile = {
+    id: 'white-leopard',
+    name: '小白豹',
+    title: '乘法小夥伴',
+    subtitle: '一起征服九九乘法表！',
+    gradient: 'from-purple-400 to-pink-500',
+    greeting: '嗨！我是小白豹，準備好和我一起挑戰乘法冒險了嗎？',
+    encourage: '別擔心，小白豹相信你一定可以的！加油！',
+    celebrate: '太棒了！小白豹為你感到超級驕傲！',
+    celebratePerfect: '哇！完美表現！小白豹要為你戴上勝利的皇冠！',
+    svg: (
+      <img 
+        src="/images/cute-white-leopard-mascot.png" 
+        alt="小白豹" 
+        className="w-20 h-20 object-contain animate-bounce-gentle"
+      />
+    ),
+  }
+
   const {
     state,
-    currentMission,
     progress,
     correctCount,
     perfect,
     answers,
+    currentMission,
     updateMode,
     updatePattern,
     updateFocusTable,
@@ -101,7 +57,7 @@ const MultiplicationAdventure = () => {
     resetToMenu,
   } = useMultiplicationGame()
 
-  const [selectedMascotId, setSelectedMascotId] = useState<string | null>(null)
+  // 固定使用小白豹作為唯一吉祥物
   const [showCelebration, setShowCelebration] = useState(false)
   const [showMascotCelebration, setShowMascotCelebration] = useState(false)
   const [answerFeedback, setAnswerFeedback] = useState<{
@@ -114,19 +70,8 @@ const MultiplicationAdventure = () => {
   const previousStatusRef = useRef(state.status)
 
   const incorrectAnswers = answers.filter((attempt) => !attempt.isCorrect)
-  const selectedMascot = useMemo(
-    () => mascots.find((mascot) => mascot.id === selectedMascotId) ?? null,
-    [selectedMascotId],
-  )
-
-  const handleSelectMascot = (id: string) => {
-    setSelectedMascotId(id)
-    soundManager.playSound(() => playSelectSound())
-    void triggerUserGestureAudio()
-  }
 
   const handleStartSession = () => {
-    if (!selectedMascot) return
     soundManager.playSound(() => playButtonClick())
     void triggerUserGestureAudio()
     startSession()
@@ -140,16 +85,15 @@ const MultiplicationAdventure = () => {
   }
 
   const handleRetry = () => {
-    if (!selectedMascot) return
-    playButtonClick()
+    soundManager.playSound(() => playButtonClick())
     void triggerUserGestureAudio()
     startSession()
     
-    // 重新開始時播放背景音樂
+    // 根據模式播放不同的背景音樂
     if (state.mode === 'practice') {
-      backgroundMusic.playPracticeMusic()
+      soundManager.playMusic(() => backgroundMusic.playPracticeMusic())
     } else {
-      backgroundMusic.playChallengeMusic()
+      soundManager.playMusic(() => backgroundMusic.playChallengeMusic())
     }
   }
 
@@ -226,17 +170,16 @@ const MultiplicationAdventure = () => {
 
       {state.status === 'setup' && (
         <section className="grid gap-6 rounded-hero bg-white/90 p-6 shadow-soft">
-          <CuteMascots mascots={mascots} selectedId={selectedMascotId} onSelect={handleSelectMascot} />
-
-          <div className="rounded-hero bg-sky/15 p-4 text-sm text-midnight">
-            {selectedMascot ? (
-              <div className="space-y-1">
-                <p className="font-bold">{selectedMascot.greeting}</p>
-                <p>{selectedMascot.encourage}</p>
-              </div>
-            ) : (
-              <p className="text-midnight/70">請挑一位吉祥物夥伴，他們會陪你完成每一道乘法任務！</p>
-            )}
+          {/* 小白豹歡迎區域 */}
+          <div className="flex items-center gap-4 rounded-hero bg-gradient-to-r from-purple-100 to-pink-100 p-4">
+            <div className="flex-shrink-0">
+              {whiteLeopardMascot.svg}
+            </div>
+            <div className="space-y-1">
+              <h3 className="text-lg font-bold text-midnight">{whiteLeopardMascot.name}</h3>
+              <p className="text-sm font-medium text-midnight/80">{whiteLeopardMascot.greeting}</p>
+              <p className="text-sm text-midnight/70">{whiteLeopardMascot.encourage}</p>
+            </div>
           </div>
 
           <div className="grid gap-3 text-left">
@@ -376,12 +319,11 @@ const MultiplicationAdventure = () => {
 
           <button
             type="button"
-            className="rounded-2xl bg-gradient-to-r from-sunrise to-peach px-4 py-3 text-lg font-bold text-midnight shadow-pop disabled:cursor-not-allowed disabled:opacity-60"
+            className="rounded-2xl bg-gradient-to-r from-sunrise to-peach px-4 py-3 text-lg font-bold text-midnight shadow-pop hover:shadow-soft transition-all"
             onClick={handleStartSession}
             data-testid="mul-start-session"
-            disabled={!selectedMascot}
           >
-            {selectedMascot ? `${selectedMascot.name}：準備好了，出發！` : '選好夥伴再出發'}
+            🚀 和{whiteLeopardMascot.name}一起出發！
           </button>
         </section>
       )}
@@ -426,15 +368,9 @@ const MultiplicationAdventure = () => {
             <p className="text-lg font-semibold text-midnight">
               得分 {correctCount} / {progress.total}
             </p>
-            {selectedMascot ? (
-              <p className="text-midnight/80">
-                {perfect ? selectedMascot.celebratePerfect : selectedMascot.celebrate}
-              </p>
-            ) : perfect ? (
-              <p className="text-midnight/80">滿分閃耀登場！太棒了！</p>
-            ) : (
-              <p className="text-midnight/80">繼續努力，離滿分更近一步！</p>
-            )}
+            <p className="text-midnight/80">
+              {perfect ? whiteLeopardMascot.celebratePerfect : whiteLeopardMascot.celebrate}
+            </p>
           </div>
 
           {incorrectAnswers.length > 0 && (
@@ -453,12 +389,11 @@ const MultiplicationAdventure = () => {
           <div className="flex flex-wrap justify-center gap-3">
             <button
               type="button"
-              className="rounded-xl bg-gradient-to-r from-sunrise to-peach px-4 py-2 font-bold text-midnight shadow-pop"
+              className="rounded-xl bg-gradient-to-r from-sunrise to-peach px-4 py-2 font-bold text-midnight shadow-pop hover:shadow-soft transition-all"
               onClick={handleRetry}
               data-testid="mul-retry"
-              disabled={!selectedMascot}
             >
-              {selectedMascot ? `${selectedMascot.name}：再闖 9 題！` : '再來 9 題'}
+              🔄 和{whiteLeopardMascot.name}再闖 9 題！
             </button>
             <button
               type="button"
@@ -489,7 +424,7 @@ const MultiplicationAdventure = () => {
       {/* 吉祥物慶祝動畫 */}
       <MascotCelebration
         show={showMascotCelebration}
-        mascot={selectedMascot}
+        mascot={whiteLeopardMascot}
         perfect={perfect}
         onComplete={() => setShowMascotCelebration(false)}
       />
