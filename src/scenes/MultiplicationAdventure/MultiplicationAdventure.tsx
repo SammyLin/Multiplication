@@ -22,21 +22,21 @@ import { soundManager } from '../../utils/soundManager'
 const tableOptions = Array.from({ length: 8 }, (_, index) => index + 2)
 
 const MultiplicationAdventure = () => {
-  // 小白豹吉祥物資料
-  const whiteLeopardMascot: MascotProfile = {
-    id: 'white-leopard',
-    name: '小白豹',
+  // 小海豹吉祥物資料
+  const whiteSealMascot: MascotProfile = {
+    id: 'white-seal',
+    name: '小海豹',
     title: '乘法小夥伴',
     subtitle: '一起征服九九乘法表！',
     gradient: 'from-purple-400 to-pink-500',
-    greeting: '嗨！我是小白豹，準備好和我一起挑戰乘法冒險了嗎？',
-    encourage: '別擔心，小白豹相信你一定可以的！加油！',
-    celebrate: '太棒了！小白豹為你感到超級驕傲！',
-    celebratePerfect: '哇！完美表現！小白豹要為你戴上勝利的皇冠！',
+    greeting: '嗨！我是小海豹，準備好和我一起挑戰乘法冒險了嗎？',
+    encourage: '別擔心，小海豹相信你一定可以的！加油！',
+    celebrate: '太棒了！小海豹為你感到超級驕傲！',
+    celebratePerfect: '哇！完美表現！小海豹要為你戴上勝利的皇冠！',
     svg: (
       <img 
         src="/images/cute-white-leopard-mascot.png" 
-        alt="小白豹" 
+        alt="小海豹" 
         className="w-20 h-20 object-contain animate-bounce-gentle"
       />
     ),
@@ -57,7 +57,7 @@ const MultiplicationAdventure = () => {
     resetToMenu,
   } = useMultiplicationGame()
 
-  // 固定使用小白豹作為唯一吉祥物
+  // 固定使用小海豹作為唯一吉祥物
   const [showCelebration, setShowCelebration] = useState(false)
   const [showMascotCelebration, setShowMascotCelebration] = useState(false)
   const [answerFeedback, setAnswerFeedback] = useState<{
@@ -170,15 +170,15 @@ const MultiplicationAdventure = () => {
 
       {state.status === 'setup' && (
         <section className="grid gap-6 rounded-hero bg-white/90 p-6 shadow-soft">
-          {/* 小白豹歡迎區域 */}
+          {/* 小海豹歡迎區域 */}
           <div className="flex items-center gap-4 rounded-hero bg-gradient-to-r from-purple-100 to-pink-100 p-4">
             <div className="flex-shrink-0">
-              {whiteLeopardMascot.svg}
+              {whiteSealMascot.svg}
             </div>
             <div className="space-y-1">
-              <h3 className="text-lg font-bold text-midnight">{whiteLeopardMascot.name}</h3>
-              <p className="text-sm font-medium text-midnight/80">{whiteLeopardMascot.greeting}</p>
-              <p className="text-sm text-midnight/70">{whiteLeopardMascot.encourage}</p>
+              <h3 className="text-lg font-bold text-midnight">{whiteSealMascot.name}</h3>
+              <p className="text-sm font-medium text-midnight/80">{whiteSealMascot.greeting}</p>
+              <p className="text-sm text-midnight/70">{whiteSealMascot.encourage}</p>
             </div>
           </div>
 
@@ -323,7 +323,7 @@ const MultiplicationAdventure = () => {
             onClick={handleStartSession}
             data-testid="mul-start-session"
           >
-            🚀 和{whiteLeopardMascot.name}一起出發！
+            🚀 和{whiteSealMascot.name}一起出發！
           </button>
         </section>
       )}
@@ -369,7 +369,7 @@ const MultiplicationAdventure = () => {
               得分 {correctCount} / {progress.total}
             </p>
             <p className="text-midnight/80">
-              {perfect ? whiteLeopardMascot.celebratePerfect : whiteLeopardMascot.celebrate}
+              {perfect ? whiteSealMascot.celebratePerfect : whiteSealMascot.celebrate}
             </p>
           </div>
 
@@ -393,7 +393,7 @@ const MultiplicationAdventure = () => {
               onClick={handleRetry}
               data-testid="mul-retry"
             >
-              🔄 和{whiteLeopardMascot.name}再闖 9 題！
+              🔄 和{whiteSealMascot.name}再闖 9 題！
             </button>
             <button
               type="button"
@@ -424,7 +424,7 @@ const MultiplicationAdventure = () => {
       {/* 吉祥物慶祝動畫 */}
       <MascotCelebration
         show={showMascotCelebration}
-        mascot={whiteLeopardMascot}
+        mascot={whiteSealMascot}
         perfect={perfect}
         onComplete={() => setShowMascotCelebration(false)}
       />

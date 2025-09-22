@@ -15,8 +15,8 @@ describe('MultiplicationAdventure scene', () => {
   it('lets a learner answer practice questions using choices', async () => {
     render(<App />)
 
-    // 小白豹是固定的吉祥物，不需要選擇
-    expect(screen.getByText('小白豹')).toBeInTheDocument()
+    // 小海豹是固定的吉祥物，不需要選擇
+    expect(screen.getByText('小海豹')).toBeInTheDocument()
     expect(screen.getByText('選擇練習方式')).toBeInTheDocument()
 
     await userEvent.click(screen.getByTestId('mul-start-session'))
