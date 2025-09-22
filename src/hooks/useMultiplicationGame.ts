@@ -295,21 +295,22 @@ export const useMultiplicationGame = () => {
       return
     }
 
+    const { score, completionTimeMs, completedAt, mode } = state
     const correctAnswers = state.answers.filter((attempt) => attempt.isCorrect).length
 
     setLeaderboard((previous) => {
-      if (previous.some((entry) => entry.createdAt === state.completedAt)) {
+      if (previous.some((entry) => entry.createdAt === completedAt)) {
         return previous
       }
 
       const entry: LeaderboardEntry = {
         id: generateEntryId(),
-        score: state.score ?? 0,
+        score,
         correctCount: correctAnswers,
         totalQuestions: QUESTION_COUNT,
-        durationMs: state.completionTimeMs ?? 0,
-        mode: state.mode,
-        createdAt: state.completedAt,
+        durationMs: completionTimeMs,
+        mode,
+        createdAt: completedAt,
       }
 
       const updated = [...previous, entry].sort(sortLeaderboard).slice(0, LEADERBOARD_LIMIT)
