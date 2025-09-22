@@ -33,7 +33,7 @@ describe('MultiplicationAdventure scene', () => {
 
     await userEvent.click(screen.getByRole('button', { name: String(answer) }))
 
-    expect(screen.getByText(/第 2 題/)).toBeInTheDocument()
+    expect(screen.getByText(/進度: 2/)).toBeInTheDocument()
   })
 
   it('supports challenge mode with keypad entry and sequential tables', async () => {
@@ -59,7 +59,7 @@ describe('MultiplicationAdventure scene', () => {
     }
     await userEvent.click(screen.getByTestId('mul-submit-answer'))
 
-    expect(screen.getByText(/第 2 題/)).toBeInTheDocument()
+    expect(screen.getByText(/進度: 2/)).toBeInTheDocument()
   })
 
   it('shows a celebration when all answers are correct', async () => {
