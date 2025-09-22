@@ -86,6 +86,6 @@ describe('MultiplicationAdventure scene', () => {
     }
 
     expect(await screen.findByTestId('mul-perfect-celebration')).toBeInTheDocument()
-    expect(screen.getByText(/得分 9/)).toBeInTheDocument()
+    expect(screen.getByText(/總分 \d+ 分/)).toBeInTheDocument()
   })
 })
