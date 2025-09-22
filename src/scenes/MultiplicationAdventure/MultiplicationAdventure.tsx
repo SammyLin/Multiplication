@@ -1,13 +1,21 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import MissionPanel from '../../components/MissionPanel/MissionPanel'
 import CuteMascots, { type MascotProfile } from '../../components/CuteMascots/CuteMascots'
+import CelebrationEffects from '../../components/CelebrationEffects/CelebrationEffects'
+import AnswerFeedback from '../../components/AnswerFeedback/AnswerFeedback'
+import ProgressIndicator from '../../components/ProgressIndicator/ProgressIndicator'
+import SoundControl from '../../components/SoundControl/SoundControl'
 import { useMultiplicationGame } from '../../hooks/useMultiplicationGame'
 import {
   playCelebrationFanfare,
   playSubtleMiss,
   playSuccessChime,
   triggerUserGestureAudio,
-} from '../../utils/soundEffects'
+  playButtonClick,
+  playSelectSound,
+  backgroundMusic,
+} from '../../utils/improvedSoundEffects'
+import { soundManager } from '../../utils/soundManager'
 
 const tableOptions = Array.from({ length: 8 }, (_, index) => index + 2)
 
@@ -209,6 +217,13 @@ const MultiplicationAdventure = () => {
   } = useMultiplicationGame()
 
   const [selectedMascotId, setSelectedMascotId] = useState<string | null>(null)
+  const [showCelebration, setShowCelebration] = useState(false)
+  const [answerFeedback, setAnswerFeedback] = useState<{
+    show: boolean
+    isCorrect: boolean
+    position?: { x: number; y: number }
+  }>({ show: false, isCorrect: false })
+  
   const answerCountRef = useRef(0)
   const previousStatusRef = useRef(state.status)
 
@@ -220,19 +235,36 @@ const MultiplicationAdventure = () => {
 
   const handleSelectMascot = (id: string) => {
     setSelectedMascotId(id)
+    soundManager.playSound(() => playSelectSound())
     void triggerUserGestureAudio()
   }
 
   const handleStartSession = () => {
     if (!selectedMascot) return
+    soundManager.playSound(() => playButtonClick())
     void triggerUserGestureAudio()
     startSession()
+    
+    // 根據模式播放不同的背景音樂
+    if (state.mode === 'practice') {
+      soundManager.playMusic(() => backgroundMusic.playPracticeMusic())
+    } else {
+      soundManager.playMusic(() => backgroundMusic.playChallengeMusic())
+    }
   }
 
   const handleRetry = () => {
     if (!selectedMascot) return
+    playButtonClick()
     void triggerUserGestureAudio()
     startSession()
+    
+    // 重新開始時播放背景音樂
+    if (state.mode === 'practice') {
+      backgroundMusic.playPracticeMusic()
+    } else {
+      backgroundMusic.playChallengeMusic()
+    }
   }
 
   useEffect(() => {
@@ -249,6 +281,18 @@ const MultiplicationAdventure = () => {
         } else {
           playSubtleMiss()
         }
+        
+        // 顯示答題反饋動畫
+        setAnswerFeedback({
+          show: true,
+          isCorrect: latest.isCorrect,
+          position: { x: window.innerWidth / 2, y: window.innerHeight / 2 }
+        })
+        
+        // 清除反饋動畫
+        setTimeout(() => {
+          setAnswerFeedback({ show: false, isCorrect: false })
+        }, 1500)
       }
       answerCountRef.current = answers.length
     }
@@ -256,16 +300,37 @@ const MultiplicationAdventure = () => {
 
   useEffect(() => {
     if (state.status === 'finished' && previousStatusRef.current !== 'finished') {
+      backgroundMusic.fadeOut(1) // 淡出背景音樂
       playCelebrationFanfare(perfect)
+      
+      // 顯示慶祝動畫
+      setShowCelebration(true)
+      
+      // 5秒後自動隱藏慶祝動畫
+      setTimeout(() => {
+        setShowCelebration(false)
+      }, 5000)
     }
     previousStatusRef.current = state.status
   }, [state.status, perfect])
 
+  // 組件卸載時停止背景音樂
+  useEffect(() => {
+    return () => {
+      backgroundMusic.stop()
+    }
+  }, [])
+
   return (
     <div className="mx-auto flex min-h-screen w-full max-w-4xl flex-col gap-6 px-4 py-8 md:px-8">
-      <header className="text-center">
+      <header className="text-center relative">
         <h1 className="text-3xl font-display text-midnight">九九小冒險</h1>
         <p className="text-sm text-midnight/75">一次 9 題，挑戰你的乘法英雄力！</p>
+        
+        {/* 音效控制 */}
+        <div className="absolute top-0 right-0">
+          <SoundControl />
+        </div>
       </header>
 
       {state.status === 'setup' && (
@@ -293,7 +358,10 @@ const MultiplicationAdventure = () => {
                     ? 'border-sunrise bg-sunrise/15'
                     : 'border-transparent bg-soft-gray'
                 }`}
-                onClick={() => updateMode('practice')}
+                onClick={() => {
+                  playButtonClick()
+                  updateMode('practice')
+                }}
                 data-testid="mul-mode-practice"
               >
                 <p className="text-lg font-bold text-midnight">練習模式</p>
@@ -306,7 +374,10 @@ const MultiplicationAdventure = () => {
                     ? 'border-lagoon bg-lagoon/15'
                     : 'border-transparent bg-soft-gray'
                 }`}
-                onClick={() => updateMode('challenge')}
+                onClick={() => {
+                  playButtonClick()
+                  updateMode('challenge')
+                }}
                 data-testid="mul-mode-challenge"
               >
                 <p className="text-lg font-bold text-midnight">挑戰模式</p>
@@ -426,11 +497,12 @@ const MultiplicationAdventure = () => {
 
       {state.status === 'playing' && currentMission && (
         <div className="grid gap-4">
-          <div className="grid items-center gap-2 rounded-hero bg-white/80 p-4 shadow-soft sm:flex sm:justify-between">
-            <p className="text-lg font-semibold text-midnight">
-              第 {progress.current} 題 / {progress.total}
-            </p>
-            <p className="text-sm font-semibold text-midnight/70">目前答對 {correctCount} 題</p>
+          <div className="rounded-hero bg-white/80 p-4 shadow-soft">
+            <ProgressIndicator 
+              current={progress.current}
+              total={progress.total}
+              correctCount={correctCount}
+            />
           </div>
 
           <MissionPanel mission={currentMission} mode={state.mode} onSubmit={submitAnswer} />
@@ -508,6 +580,20 @@ const MultiplicationAdventure = () => {
           </div>
         </section>
       )}
+
+      {/* 動畫效果組件 */}
+      <CelebrationEffects 
+        show={showCelebration} 
+        perfect={perfect}
+        onComplete={() => setShowCelebration(false)}
+      />
+      
+      <AnswerFeedback
+        show={answerFeedback.show}
+        isCorrect={answerFeedback.isCorrect}
+        position={answerFeedback.position}
+        onComplete={() => setAnswerFeedback({ show: false, isCorrect: false })}
+      />
     </div>
   )
 }

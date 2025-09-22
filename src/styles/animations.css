@@ -1,0 +1,284 @@
+/* 可愛的動畫效果 */
+
+@keyframes bounce-gentle {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-10px) scale(1.05);
+  }
+}
+
+@keyframes wiggle {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-3deg);
+  }
+  75% {
+    transform: rotate(3deg);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.6);
+    transform: scale(1.02);
+  }
+}
+
+@keyframes sparkle {
+  0%, 100% {
+    opacity: 0;
+    transform: scale(0) rotate(0deg);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1) rotate(180deg);
+  }
+}
+
+@keyframes celebration-burst {
+  0% {
+    opacity: 1;
+    transform: scale(0) rotate(0deg);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2) rotate(180deg);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.5) rotate(360deg);
+  }
+}
+
+@keyframes float-up {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-50px) scale(1.2);
+  }
+}
+
+@keyframes shake-no {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  10%, 30%, 50%, 70%, 90% {
+    transform: translateX(-5px);
+  }
+  20%, 40%, 60%, 80% {
+    transform: translateX(5px);
+  }
+}
+
+@keyframes rainbow-border {
+  0% {
+    border-color: #ff6b6b;
+  }
+  16.66% {
+    border-color: #ffa726;
+  }
+  33.33% {
+    border-color: #ffee58;
+  }
+  50% {
+    border-color: #66bb6a;
+  }
+  66.66% {
+    border-color: #42a5f5;
+  }
+  83.33% {
+    border-color: #ab47bc;
+  }
+  100% {
+    border-color: #ff6b6b;
+  }
+}
+
+@keyframes number-pop {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.3);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* 實用的動畫類別 */
+.animate-bounce-gentle {
+  animation: bounce-gentle 2s ease-in-out infinite;
+}
+
+.animate-wiggle {
+  animation: wiggle 1s ease-in-out;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.animate-sparkle {
+  animation: sparkle 1.5s ease-in-out infinite;
+}
+
+.animate-celebration-burst {
+  animation: celebration-burst 1s ease-out forwards;
+}
+
+.animate-float-up {
+  animation: float-up 2s ease-out forwards;
+}
+
+.animate-shake-no {
+  animation: shake-no 0.5s ease-in-out;
+}
+
+.animate-rainbow-border {
+  animation: rainbow-border 3s linear infinite;
+}
+
+.animate-number-pop {
+  animation: number-pop 0.3s ease-out;
+}
+
+/* 懸停效果 */
+.hover-lift {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hover-lift:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* 按鈕特效 */
+.button-magical {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(45deg, #ff6b6b, #ffa726, #ffee58, #66bb6a, #42a5f5, #ab47bc);
+  background-size: 400% 400%;
+  animation: rainbow-border 3s ease infinite;
+}
+
+.button-magical::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.5s;
+}
+
+.button-magical:hover::before {
+  left: 100%;
+}
+
+/* 成功動畫 */
+.success-celebration {
+  position: relative;
+}
+
+.success-celebration::after {
+  content: '✨';
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  font-size: 1.5rem;
+  animation: sparkle 1.5s ease-in-out infinite;
+}
+
+/* 錯誤提示動畫 */
+.error-gentle {
+  animation: shake-no 0.5s ease-in-out;
+  border: 2px solid #ff6b6b;
+  background-color: rgba(255, 107, 107, 0.1);
+}
+
+/* 載入動畫 */
+.loading-dots {
+  display: inline-flex;
+  gap: 4px;
+}
+
+.loading-dots span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #42a5f5;
+  animation: bounce-gentle 1.4s ease-in-out infinite both;
+}
+
+.loading-dots span:nth-child(1) {
+  animation-delay: -0.32s;
+}
+
+.loading-dots span:nth-child(2) {
+  animation-delay: -0.16s;
+}
+
+/* 進度條動畫 */
+.progress-bar {
+  background: linear-gradient(90deg, #ff6b6b, #ffa726, #ffee58, #66bb6a);
+  background-size: 200% 100%;
+  animation: rainbow-border 2s linear infinite;
+}
+
+/* 星星背景動畫 */
+.stars-background {
+  position: relative;
+  overflow: hidden;
+}
+
+.stars-background::before {
+  content: '✨';
+  position: absolute;
+  top: 10%;
+  left: 10%;
+  font-size: 1rem;
+  opacity: 0.6;
+  animation: sparkle 3s ease-in-out infinite;
+  animation-delay: 0s;
+}
+
+.stars-background::after {
+  content: '⭐';
+  position: absolute;
+  top: 70%;
+  right: 15%;
+  font-size: 0.8rem;
+  opacity: 0.5;
+  animation: sparkle 2.5s ease-in-out infinite;
+  animation-delay: 1s;
+}
+
+/* 響應式動畫調整 */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* 觸控設備優化 */
+@media (hover: none) and (pointer: coarse) {
+  .hover-lift:active {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  }
+}

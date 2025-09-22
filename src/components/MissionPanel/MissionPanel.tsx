@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import type { Mission } from '../../game/gameTypes'
+import { playButtonClick } from '../../utils/improvedSoundEffects'
 
 export type MissionPanelMode = 'practice' | 'challenge'
 
@@ -60,6 +61,7 @@ const MissionPanel = ({ mission, mode, onSubmit }: MissionPanelProps) => {
   }
 
   const handleChoiceSelect = (choice: number) => {
+    playButtonClick()
     onSubmit(choice)
   }
 
@@ -136,6 +138,7 @@ const MissionPanel = ({ mission, mode, onSubmit }: MissionPanelProps) => {
                   className="rounded-xl bg-soft-gray px-4 py-3 text-xl font-bold text-midnight shadow-soft"
                   data-testid={`mul-keypad-${key.label}`}
                   onClick={() => {
+                    playButtonClick()
                     if (key.type === 'digit') {
                       appendDigit(key.label)
                     } else if (key.type === 'clear') {
